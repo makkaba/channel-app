@@ -1,0 +1,32 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="http://ws.justpick.me/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="main.js"></script>
+    <link href="styles/main.css" rel="stylesheet">
+</head>
+
+<body class="ChannelPlugin_bodyWrap">
+    <div class="ChannelPlugin_bodyInnerWrap">
+        <button id="ChannelPlugin_ggLogin">관리자</button>
+        
+        <div id="ChannelPlugin_closeLayout"></div>
+        <div id="ChannelPlugin_openLayout">
+            <ul id="ChannelPlugin_messageWrap">
+            </ul>
+            <div class="ChannelPlugin_inputWrap">
+                <div class="ChannelPlugin_inputInnerWrap">
+                    <textarea id="ChannelPlugin_textArea" type="text" placeholder="내용을 입력해주세요"></textarea>
+                    <button id="ChannelPlugin_sendBtn">전송</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
