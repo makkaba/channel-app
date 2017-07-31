@@ -10,15 +10,12 @@ $(function() {
 	var userId =localStorage.getItem("userId");
 	CP.$textArea = $('#ChannelPlugin_textArea');
 
-
 	//익명 유저 아이디가 없으면 새로 생성한다.
 	if(!userId){
 		userId = generateId(13);
 		localStorage.setItem("userId", userId);
-		console.log("userId:",userId);
 	}
 
-	//소켓에 유저 아이디를 알린다.
 	socket.emit('register', {userId: userId});
 
 	$('#ChannelPlugin_sendBtn').on('click', function(){
@@ -33,18 +30,16 @@ $(function() {
 		socket.emit('message', messageData);
 		addMessageElement(messageData);
 		CP.$textArea.val('');
+		var element = document.getElementById("ChannelPlugin_messageWrap");
+		element.scrollTop = element.scrollHeight - element.clientHeight;
 	});
 	socket.on('load', function(pastMessages){
-		console.log('log message', pastMessages);
-
 		Object.values(pastMessages).forEach(function(pastMessage){
-			console.log('msg:', pastMessage);
 			addMessageElement(pastMessage);
 		});
 	});
 	
 	socket.on('message', function(data){
-		console.log('메시지 도착:',data);
 		if(data.sender == userId){
 			return;
 		}
@@ -60,7 +55,7 @@ $(function() {
         console.log('관리자 로그인 안됨');
       } else {
       	//로그인 성공하여 리다이렉트 후 
-        console.log('관리자 로그인 성공', result.user.displayName, result.user.email);
+        console.log('관리자 로그인 성공(미완성)', result.user.displayName, result.user.email);
         $('#ChannelPlugin_ggLogin').hide();
       }
   }).catch(function (error) {
