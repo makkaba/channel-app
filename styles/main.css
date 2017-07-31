@@ -22,42 +22,57 @@
 }
 
 #ChannelPlugin_openLayout{
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); 
+	position: relative;
+	display: flex;
+	flex-direction: column;
 	width: 100%;
 	height: 100%; 
-	position: relative;
 	background-color: #edefee; 
-	
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); 
 }
 /**************
 메시지출력 부분
 ***************/
-
-
 #ChannelPlugin_messageWrap{
+	display: flex;
+	flex: 1 1;
+	flex-direction: column;
 	overflow-y: scroll;
+}
+
+#ChannelPlugin_messageList{
 	margin:0;
 	padding:0;
 }
-#ChannelPlugin_messageWrap li{
+#ChannelPlugin_messageList li.bubbleWrap{
 	margin-bottom: 0.5em;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }
-#ChannelPlugin_messageWrap li>.bubble{
+
+#ChannelPlugin_messageList li.my{
+	align-items: flex-end !important;
+}
+
+#ChannelPlugin_messageList li>.bubble{
 	background-color: #51e494;
 	border-radius: 25px;
 	color: white;
 	display: inline-block;
-	padding: 2px 2px;
+	padding: 1em 1em;
+}
+#ChannelPlugin_messageList li>.my{
+	background-color: white;
+	color: black;
 }
 
 /**************
 입력 부분
 ***************/
 .ChannelPlugin_inputWrap{
-	position:absolute; 
-	bottom: 1em; 
 	width:100%; 
-	min-height: 3em;
+	min-height: 4em;
 }
 
 .ChannelPlugin_inputInnerWrap{
@@ -84,4 +99,5 @@
 	background-color:#51e494; 
 	border:0; 
 	color:white;
+	font-size: 1em;
 }

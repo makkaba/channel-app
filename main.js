@@ -25,10 +25,13 @@ $(function() {
 		if(CP.$textArea.val() == ''){
 			return;
 		}
-		socket.emit('message', {
+		var messageData = {
 			message: CP.$textArea.val(),
-			userId: userId
-		});
+			sender: userId
+		};
+
+		socket.emit('message', messageData);
+		addMessageElement(messageData);
 		CP.$textArea.val('');
 	});
 	socket.on('load', function(pastMessages){
@@ -42,6 +45,9 @@ $(function() {
 	
 	socket.on('message', function(data){
 		console.log('메시지 도착:',data);
+		if(data.sender == userId){
+			return;
+		}
 		addMessageElement(data);
 	});
 	socket.on('user joined', function(data){
@@ -66,13 +72,17 @@ $(function() {
   });
 
   function addMessageElement(data){
-  	var $messageLayout = document.getElementById('ChannelPlugin_messageWrap');
+  	var $messageLayout = document.getElementById('ChannelPlugin_messageList');
   	var $message = document.createElement("li");
   	var $messageContext = document.createElement("div");
+  	$message.className ="bubbleWrap ";
+  	
   	$messageContext.className = "bubble ";
   	if(data.sender == userId){
-  		$messageContext.className += "my";
+  		$message.className += "my ";
+  		$messageContext.className += "my ";
   	}
+  	
   	$messageContext.innerHTML = data.message;
   	$message.appendChild($messageContext);
 		$messageLayout.appendChild($message);
