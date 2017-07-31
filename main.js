@@ -7,21 +7,19 @@ namespace object CP
 $(function() {
 	var socket = io('http://ws.justpick.me');
 	var CP = {};
-	var userId;
+	var userId =localStorage.getItem("userId");
 	CP.$textArea = $('#ChannelPlugin_textArea');
 
 
-	//이미 익명 유저아이디가 생성되어 있으면 그대로 사용한다.
-	if(!localStorage.getItem("userId")){
+	//익명 유저 아이디가 없으면 새로 생성한다.
+	if(!userId){
 		userId = generateId(13);
-		console.log("userId:",userId);
 		localStorage.setItem("userId", userId);
-	}else{
-		userId = localStorage.getItem("userId");
+		console.log("userId:",userId);
 	}
 
 	//소켓에 유저 아이디를 알린다.
-	socket.emit('register', {userId});
+	socket.emit('register', {userId: userId});
 
 	$('#ChannelPlugin_sendBtn').on('click', function(){
 		if(CP.$textArea.val() == ''){
@@ -29,9 +27,17 @@ $(function() {
 		}
 		socket.emit('message', {
 			message: CP.$textArea.val(),
-			userName: ''
+			userId: userId
 		});
 		CP.$textArea.val('');
+	});
+	socket.on('load', function(pastMessages){
+		console.log('log message', pastMessages);
+
+		Object.values(pastMessages).forEach(function(pastMessage){
+			console.log('msg:', pastMessage);
+			addMessageElement(pastMessage);
+		});
 	});
 	
 	socket.on('message', function(data){
@@ -42,15 +48,13 @@ $(function() {
 		console.log('새로운 유저!', data);
 	});
 
- 
-	//리다이렉트로 관리자 로그인처리
+ 	//관리자 로그인 확인
 	firebase.auth().getRedirectResult().then(function (result) {
       if (!result.user) {
-        // User not logged in, start login.
-        console.log('need to sign in');
+        console.log('관리자 로그인 안됨');
       } else {
-        // user logged in, go to home page.
-        console.log('sign in!', result.user.displayName, result.user.email);
+      	//로그인 성공하여 리다이렉트 후 
+        console.log('관리자 로그인 성공', result.user.displayName, result.user.email);
         $('#ChannelPlugin_ggLogin').hide();
       }
   }).catch(function (error) {
@@ -65,7 +69,10 @@ $(function() {
   	var $messageLayout = document.getElementById('ChannelPlugin_messageWrap');
   	var $message = document.createElement("li");
   	var $messageContext = document.createElement("div");
-  	$messageContext.className = "bubble";
+  	$messageContext.className = "bubble ";
+  	if(data.sender == userId){
+  		$messageContext.className += "my";
+  	}
   	$messageContext.innerHTML = data.message;
   	$message.appendChild($messageContext);
 		$messageLayout.appendChild($message);
