@@ -7,15 +7,23 @@ namespace object CP
 $(function() {
 	var socket = io('http://ws.justpick.me');
 	var CP = {};
+	var userId;
 	CP.$textArea = $('#ChannelPlugin_textArea');
 
 
+	//이미 익명 유저아이디가 생성되어 있으면 그대로 사용한다.
+	if(!localStorage.getItem("userId")){
+		userId = generateId(13);
+		console.log("userId:",userId);
+		localStorage.setItem("userId", userId);
+	}else{
+		userId = localStorage.getItem("userId");
+	}
+
+	//소켓에 유저 아이디를 알린다.
+	socket.emit('register', {userId});
 
 	$('#ChannelPlugin_sendBtn').on('click', function(){
-		//var userName = Math.random().toString(36).substring(7);
-		//console.log("userName:", userName);
-		//socket.emit('add user', userName);
-
 		if(CP.$textArea.val() == ''){
 			return;
 		}
@@ -28,15 +36,14 @@ $(function() {
 	
 	socket.on('message', function(data){
 		console.log('메시지 도착:',data);
-
 		addMessageElement(data);
 	});
 	socket.on('user joined', function(data){
-	console.log('user join!', data);
+		console.log('새로운 유저!', data);
 	});
 
  
-	//리다이렉트로 로그인처리
+	//리다이렉트로 관리자 로그인처리
 	firebase.auth().getRedirectResult().then(function (result) {
       if (!result.user) {
         // User not logged in, start login.
@@ -47,9 +54,7 @@ $(function() {
         $('#ChannelPlugin_ggLogin').hide();
       }
   }).catch(function (error) {
-    // Handle Errors here.
     console.log(error);
-    // ...
   });
  	
   $('#ChannelPlugin_ggLogin').on('click', ()=> {
@@ -57,16 +62,22 @@ $(function() {
   });
 
   function addMessageElement(data){
+  	var $messageLayout = document.getElementById('ChannelPlugin_messageWrap');
   	var $message = document.createElement("li");
   	var $messageContext = document.createElement("div");
-  	$messageContext.className="bubble";
+  	$messageContext.className = "bubble";
   	$messageContext.innerHTML = data.message;
-
   	$message.appendChild($messageContext);
-		//추가한다
-		var $messageLayout = document.getElementById('ChannelPlugin_messageWrap');
 		$messageLayout.appendChild($message);
-
   };
+  function generateId(size){
+  	var result = "";
+    var pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var length = pool.length + 1;
+    for(var i = 0; i < size; i++) {
+        result += pool.charAt(Math.floor(Math.random() * (length)));
+    }
+    return result;
+  }
 
 });
